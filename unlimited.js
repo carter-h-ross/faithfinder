@@ -385,8 +385,8 @@ Zimbabwe 12,570,000 87.0 0.9 7.9 0.1 0.1 3.8 0.3 0.1`
 
 let data = stringTo2DList(inputString);
 
-const todaysIndex = getCountryIndex("spain".toLowerCase());
-let scores = scoresList(todaysIndex);
+const randomIndex = Math.floor(Math.random() * data.length);
+let scores = scoresList(randomIndex);
 
 let guesses = [];
 
