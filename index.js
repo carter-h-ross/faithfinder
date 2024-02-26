@@ -1,3 +1,46 @@
+let allGuesses = [];
+
+function addRow(country, score) {
+    console.log(`score: ${score} | country: ${country}`);
+    const gridContainer = document.getElementById("gridContainer");
+    gridContainer.innerHTML = ""; // Clear previous content
+    allGuesses.push([score, country]);
+    allGuesses.sort((a, b) => a[0] - b[0]);
+
+    for (let i = 0; i < allGuesses.length; i++) {
+        const newRow = document.createElement("div");
+        const scoreFraction = (data.length - allGuesses[i][0]) / data.length;
+        newRow.classList.add("grid-item");
+        newRow.textContent = `${allGuesses[i][0]} ${allGuesses[i][1]}`;
+        let red = 0;
+        let green = 0;
+        if (scoreFraction <= 0.5) {
+            green = Math.floor(scoreFraction * 510);
+            red = 255;
+        } else {
+            red = Math.floor((1 - scoreFraction) * 510);
+            green = 255;
+        }
+
+        newRow.style.background = `linear-gradient(to right, rgb(${red}, ${green}, 0) ${scoreFraction * 100}%, white ${scoreFraction * 100}%)`;
+        newRow.style.padding = "20px";
+        newRow.style.marginTop = "5px";
+        newRow.style.border = "1px solid black";
+        newRow.style.borderRadius = "10px";
+        gridContainer.appendChild(newRow);
+    }
+}
+
+function rgbToHex(r, g, b) {
+    var redHex = r.toString(16).padStart(2, '0');
+    var greenHex = g.toString(16).padStart(2, '0');
+    var blueHex = b.toString(16).padStart(2, '0');
+    return "#" + redHex + greenHex + blueHex;
+}
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 function isNumber(input) {
     // regular expression patterns
     const integerPattern = /^\d+$/;
@@ -62,7 +105,13 @@ function scoresList(relateIndex) {
 }
 
 function isCountry(countryName) {
-    console.log(countryName);
+     // Check if the countryName exists in allGuesses array
+     const existingGuess = allGuesses.find(guess => guess[1].toLowerCase() === countryName.toLowerCase());
+     if (existingGuess) {
+         alert(`${countryName} has already been guessed.`);
+         return false;
+     }
+
     // Assuming data is defined outside of this function
     for (let params of data) {
         if (params[0].toLowerCase() == countryName.toLowerCase()) {
@@ -83,6 +132,22 @@ function startGame() {
         }
     }
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const input = document.querySelector('.input');
+    input.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            const countryName = input.value.trim(); // Get the trimmed value of the input
+            input.value = "";
+            if (isCountry(countryName)) {
+                addRow(countryName , getCountryScoreIndex(countryName));
+            } else {
+                alert(`${countryName} is not a valid guess of a country`);
+            }
+        }
+    });
+});
+
 
 // Example usage:
 const inputString = `Afghanistan 31,410,000 0.1 99.7 0.1 0.1 0.1 0.1 0.1 0.1 
@@ -325,4 +390,4 @@ let scores = scoresList(todaysIndex);
 
 let guesses = [];
 
-startGame();
+// startGame();
